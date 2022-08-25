@@ -4,8 +4,44 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      - DISPLAY_ERRORS
+      - MYSQL_HOST
+      - MYSQL_USER
+      - MYSQL_PASSWORD
     ports:
       - 8000:80
     volumes:
       - ./:/var/www
     container_name: app
+    networks:
+      - application
+    links:
+      - mysql
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d
+    container_name: mysql
+    networks:
+      - application
+      - database
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    networks:
+      - database
+    links:
+      - mysql
+
+networks:
+  application:
+    name: application_network
+  database:
+    name: database_network

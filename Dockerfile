@@ -13,8 +13,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
     && apt-get install -y nodejs \
     && npm install --global yarn
 
-COPY php.ini /usr/local/etc/php
+# PHP CONFIGURATION
+RUN apt-get update \
+    && apt-get -y install git
 
-ENV ENV_DISPLAY_ERRORS="On"
+COPY php.ini /usr/local/etc/php
 
 WORKDIR /var/www
